@@ -1,17 +1,30 @@
 package newsscraper;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static newsscraper.NewsItem.MAX_STR_LENGTH;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class NewsItemTest {
 
     private static final String TEST_TITLE = "Everything is just fine";
     private static final String TEST_URI = "https://www.bbc.co.uk";
     private static final String TEST_AUTHOR = "Hans Mustermann";
+    private static String loongString;
+
+    @BeforeClass
+    public static void oneTimeSetup() {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < MAX_STR_LENGTH + 1; i++) {
+            builder.append("A");
+        }
+        loongString = builder.toString();
+    }
 
     @Test
     public void testGettersSetters() throws URISyntaxException {
@@ -42,6 +55,15 @@ public class NewsItemTest {
         item.setAuthor(null);
     }
 
+    @Test
+    public void setAuthorTrimsLength() throws URISyntaxException {
+        assertTrue("Sanity check failed: test string is already shorter than the limit", loongString.length() > MAX_STR_LENGTH);
+
+        final NewsItem item = new NewsItem(TEST_TITLE, TEST_URI, loongString);
+
+        assertEquals("String length trimmed incorrectly", item.getAuthor().length(), MAX_STR_LENGTH);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void setTitleThrowsIAEIfEmpty() throws URISyntaxException {
         final NewsItem item = new NewsItem(TEST_TITLE, TEST_URI, TEST_AUTHOR);
@@ -54,6 +76,15 @@ public class NewsItemTest {
         final NewsItem item = new NewsItem(TEST_TITLE, TEST_URI, TEST_AUTHOR);
 
         item.setTitle(null);
+    }
+
+    @Test
+    public void setTitleTrimsLength() throws URISyntaxException {
+        assertTrue("Sanity check failed: test string is already shorter than the limit", loongString.length() > MAX_STR_LENGTH);
+
+        final NewsItem item = new NewsItem(loongString, TEST_URI, TEST_AUTHOR);
+
+        assertEquals("String length trimmed incorrectly", item.getTitle().length(), MAX_STR_LENGTH);
     }
 
     @Test(expected = URISyntaxException.class)

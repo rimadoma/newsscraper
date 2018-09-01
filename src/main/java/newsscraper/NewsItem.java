@@ -4,6 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class NewsItem {
+    public static final int MAX_STR_LENGTH = 256;
+
     private String title;
     private URI uri;
     private String author;
@@ -25,7 +27,7 @@ public class NewsItem {
         if (author.isEmpty()) {
             throw new IllegalArgumentException("Author cannot be empty");
         }
-        this.author = author;
+        this.author = trimLength(author);
     }
 
     public String getTitle() {
@@ -36,7 +38,7 @@ public class NewsItem {
         if (title.isEmpty()) {
             throw new IllegalArgumentException("Title cannot be empty");
         }
-        this.title = title;
+        this.title = trimLength(title);
     }
 
     public URI getUri() {
@@ -78,5 +80,10 @@ public class NewsItem {
             throw new IllegalArgumentException("Rank cannot be negative");
         }
         this.rank = rank;
+    }
+
+    private String trimLength(final String s) {
+        final int endIndex = Math.min(s.length(), MAX_STR_LENGTH);
+        return s.substring(0, endIndex);
     }
 }
