@@ -22,7 +22,7 @@ public class NewsItem {
     }
 
     public void setAuthor(final String author) throws IllegalArgumentException {
-        if (title.isEmpty()) {
+        if (author.isEmpty()) {
             throw new IllegalArgumentException("Author cannot be empty");
         }
         this.author = author;
