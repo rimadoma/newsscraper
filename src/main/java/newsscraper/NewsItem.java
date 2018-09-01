@@ -74,6 +74,9 @@ public class NewsItem {
     }
 
     public void setRank(int rank) throws IllegalArgumentException {
+        if (rank < 0) {
+            throw new IllegalArgumentException("Rank cannot be negative");
+        }
         this.rank = rank;
     }
 }
