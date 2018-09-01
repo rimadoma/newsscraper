@@ -21,20 +21,23 @@ Then refactor current code as concrete classes that implement those interfaces.
 public class NewsScraper {
     private static final int MAX_POSTS = 100;
 
-    private static List<NewsItem> parse(final int posts) {
+    private static void parse(final int posts) {
         final int capacity = Math.min(posts, MAX_POSTS);
-        final List<NewsItem> items = new ArrayList<>(capacity);
+        long badItems = 0;
         try {
             int page = 1;
-            while (items.size() < posts) {
+            int scraped = 0;
+            while (scraped < posts) {
                 final URL url = new URL("http://news.ycombinator.com/news?p=" + page);
                 final Document document = Jsoup.parse(url, 10_000);
-                final List<NewsItem> pageItems = parsePage(document);
+                final List<NewsItem> items = parsePage(document);
                 // TODO Exit if all items null (parsing failed for all)?
-                if (pageItems.size() == 0) {
-                    return items;
+                if (items.size() == 0) {
+                    return;
                 }
-                items.addAll(pageItems);
+                items.stream().filter(Objects::nonNull).forEach(i -> System.out.println(i.toJSON()));
+                badItems += items.stream().filter(Objects::isNull).count();
+                scraped += items.size();
                 page++;
                 // TODO Should exit if page number reaches max (if there is one)
             }
@@ -42,7 +45,9 @@ public class NewsScraper {
             // TODO Log exception trace
             System.out.println("There was an error in the connection - please try again");
         }
-        return items;
+        if (badItems > 0) {
+            System.out.println("There were " + badItems + " news items that could not be read");
+        }
     }
 
     public static List<NewsItem> parsePage(final Document document) {
@@ -81,11 +86,6 @@ public class NewsScraper {
     }
 
     public static void main(final String[] args) {
-        final List<NewsItem> items = parse(MAX_POSTS);
-        items.stream().filter(Objects::nonNull).forEach(i -> System.out.println(i.toJSON()));
-        final long badItems = items.stream().filter(Objects::isNull).count();
-        if (badItems > 0) {
-            System.out.println("There were " + badItems + " news items that could not be read");
-        }
+        parse(MAX_POSTS);
     }
 }
