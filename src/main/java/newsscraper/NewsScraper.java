@@ -16,7 +16,7 @@ import java.util.Objects;
 public class NewsScraper {
     private static final int MAX_POSTS = 100;
 
-    private static List<NewsItem> parsePage(final Document document) {
+    public static List<NewsItem> parsePage(final Document document) {
         final Iterator<Element> titleRows = document.select("tr.athing").iterator();
         final Iterator<Element> metaRows = document.select("tr > td.subtext").iterator();
         final List<NewsItem> items = new ArrayList<>();
