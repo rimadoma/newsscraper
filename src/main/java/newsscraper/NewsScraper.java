@@ -30,7 +30,7 @@ public class NewsScraper {
             while (scraped < posts) {
                 final URL url = new URL("http://news.ycombinator.com/news?p=" + page);
                 final Document document = Jsoup.parse(url, 10_000);
-                final List<NewsItem> items = parsePage(document);
+                final List<NewsItem> items = parsePage(document, posts - scraped);
                 // TODO Exit if all items null (parsing failed for all)?
                 if (items.size() == 0) {
                     return;
@@ -50,11 +50,11 @@ public class NewsScraper {
         }
     }
 
-    public static List<NewsItem> parsePage(final Document document) {
+    public static List<NewsItem> parsePage(final Document document, final int itemsNeeded) {
         final Iterator<Element> titleRows = document.select("tr.athing").iterator();
         final Iterator<Element> metaRows = document.select("tr > td.subtext").iterator();
         final List<NewsItem> items = new ArrayList<>();
-        while (titleRows.hasNext() && metaRows.hasNext()) {
+        while (titleRows.hasNext() && metaRows.hasNext() && items.size() < itemsNeeded) {
             final Element titleRow = titleRows.next();
             final Element metaRow = metaRows.next();
             final NewsItem item = parseItem(titleRow, metaRow);

@@ -53,11 +53,20 @@ public class NewsScraperTest {
     public void parsePage() {
         final Document document = Jsoup.parse(HACKER_NEWS_HTML);
 
-        final List<NewsItem> newsItems = NewsScraper.parsePage(document);
+        final List<NewsItem> newsItems = NewsScraper.parsePage(document, 100);
 
         assertEquals(3, newsItems.size());
         assertEquals("User 1", newsItems.get(0).getAuthor());
         assertNull(newsItems.get(1));
         assertEquals("User 3", newsItems.get(2).getAuthor());
+    }
+
+    @Test
+    public void parsePageLimit() {
+        final Document document = Jsoup.parse(HACKER_NEWS_HTML);
+
+        final List<NewsItem> newsItems = NewsScraper.parsePage(document, 1);
+
+        assertEquals(1, newsItems.size());
     }
 }
