@@ -29,9 +29,9 @@ public class NewsItemTest {
     @Test
     public void testGettersSetters() throws URISyntaxException {
         final NewsItem item = new NewsItem(TEST_TITLE, TEST_URI, TEST_AUTHOR);
-        item.setPoints(1);
-        item.setComments(2);
-        item.setRank(3);
+        item.setPoints("1");
+        item.setComments("2");
+        item.setRank("3");
 
         assertEquals(TEST_TITLE, item.getTitle());
         assertEquals(new URI(TEST_URI), item.getUri());
@@ -96,20 +96,20 @@ public class NewsItemTest {
     public void setCommentsThrowsIAEIfNegative() throws URISyntaxException {
         final NewsItem item = new NewsItem(TEST_TITLE, TEST_URI, TEST_AUTHOR);
 
-        item.setComments(-1);
+        item.setComments("-1");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setPointsThrowsIAEIfNegative() throws URISyntaxException {
         final NewsItem item = new NewsItem(TEST_TITLE, TEST_URI, TEST_AUTHOR);
 
-        item.setPoints(-1);
+        item.setPoints("-1");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setRankThrowsIAEIfNegative() throws URISyntaxException {
         final NewsItem item = new NewsItem(TEST_TITLE, TEST_URI, TEST_AUTHOR);
 
-        item.setRank(-1);
+        item.setRank("-1");
     }
 }

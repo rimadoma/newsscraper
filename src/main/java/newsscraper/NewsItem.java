@@ -53,37 +53,36 @@ public class NewsItem {
         return comments;
     }
 
-    public void setComments(final int comments) throws IllegalArgumentException {
-        if (comments < 0) {
-            throw new IllegalArgumentException("Number of comments cannot be negative");
-        }
-        this.comments = comments;
+    public void setComments(final String comments) throws IllegalArgumentException {
+        this.comments = parseNonNegativeInt(comments);
     }
 
     public int getPoints() {
         return points;
     }
 
-    public void setPoints(final int points) throws IllegalArgumentException {
-        if (points < 0) {
-            throw new IllegalArgumentException("Number of points cannot be negative");
-        }
-        this.points = points;
+    public void setPoints(final String points) throws IllegalArgumentException {
+        this.points = parseNonNegativeInt(points);
     }
 
     public int getRank() {
         return rank;
     }
 
-    public void setRank(int rank) throws IllegalArgumentException {
-        if (rank < 0) {
-            throw new IllegalArgumentException("Rank cannot be negative");
-        }
-        this.rank = rank;
+    public void setRank(final String rank) throws IllegalArgumentException {
+        this.rank = parseNonNegativeInt(rank);
     }
 
     private String trimLength(final String s) {
         final int endIndex = Math.min(s.length(), MAX_STR_LENGTH);
         return s.substring(0, endIndex);
+    }
+
+    private int parseNonNegativeInt(String s) {
+        final int value = Integer.parseInt(s);
+        if (value < 0) {
+            throw new IllegalArgumentException("Value cannot be negative");
+        }
+        return value;
     }
 }
