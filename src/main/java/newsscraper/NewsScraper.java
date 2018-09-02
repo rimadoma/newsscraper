@@ -96,6 +96,27 @@ public class NewsScraper {
     }
 
     public static void main(final String[] args) {
-        parse(MAX_POSTS);
+        if (!isValidArgs(args)) {
+            System.out.println("Please provide (only) the --posts n argument");
+            return;
+        }
+        final int posts = parseNPosts(args[1]);
+        if (posts < 1 || posts > 100) {
+            System.out.println("Number of posts is invalid, please provide an integer between 1 and 100");
+            return;
+        }
+        parse(posts);
+    }
+
+    private static int parseNPosts(final String arg) {
+        try {
+            return Integer.valueOf(arg);
+        } catch (final NumberFormatException nfe) {
+            return -1;
+        }
+    }
+
+    private static boolean isValidArgs(final String[] args) {
+        return args.length == 2 && args[0].equals("--posts");
     }
 }
