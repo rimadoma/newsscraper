@@ -133,7 +133,6 @@ public class NewsScraper {
     }
 
     public static void main(final String[] args) {
-        parse(10);
         if (!isValidArgs(args)) {
             System.out.println("Please provide (only) the --posts n argument");
             return;
