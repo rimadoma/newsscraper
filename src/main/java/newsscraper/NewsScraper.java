@@ -14,6 +14,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ *  A simple command line tool for printing items from Hacker News feed in JSON.
+ *  <p>
+ *  Usage: java newsscraper.NewsScraper --posts n
+ *  </p>
+ */
 /* If scrapers for other news sites are needed in the future,
 create interface "NewsItem" with method "String toJSON()",
 and interface "NewsScraper" with method "List<NewsItem> parse(int)".
@@ -22,6 +28,15 @@ Then refactor current code as concrete classes that implement those interfaces.
 public class NewsScraper {
     private static final int MAX_POSTS = 100;
 
+    /**
+     * Prints posts from Hacker News in JSON
+     * <p>
+     * Loads however many pages are needed to scrape the given number of posts.
+     * Also reports the number of items it failed to parse.
+     * </p>
+     *
+     * @param posts number of news posts you want printed.
+     */
     private static void parse(final int posts) {
         long badItems = 0;
         final List<NewsItem> items = new ArrayList<>(posts);
@@ -60,6 +75,14 @@ public class NewsScraper {
         System.out.println(jsonArray.toString(4));
     }
 
+    /**
+     * Parses a single page of news items from Hacker News
+     *
+     * @param document    a {@link Document} created from one page of Hacker News feed.
+     * @param itemsNeeded number of items still needed to fulfill the number of posts requested.
+     *                    NB method may return less items!
+     * @return all the news items parsed from the page. NB elements in the list may be null (parsing failed)!
+     */
     static List<NewsItem> parsePage(final Document document, final int itemsNeeded) {
         final Iterator<Element> titleRows = document.select("tr.athing").iterator();
         final Iterator<Element> metaRows = document.select("tr > td.subtext").iterator();
@@ -74,6 +97,13 @@ public class NewsScraper {
         return items;
     }
 
+    /**
+     * Tries to parse a {@link NewsItem} from Hacker News.
+     *
+     * @param titleRow a &lt;tr class=\"athing\"&gt; element (contains rank, title and uri).
+     * @param metaRow a &lt;td class=\"subtext\"&gt; element (contains author, points and comments).
+     * @return a new NewsItem instance if parsing succeeded, null otherwise.
+     */
     private static NewsItem parseItem(final Element titleRow, final Element metaRow) {
         final String rank = titleRow.select("span.rank").text().split("\\.")[0];
         final Elements link = titleRow.select("td.title > a.storylink");
@@ -103,13 +133,14 @@ public class NewsScraper {
     }
 
     public static void main(final String[] args) {
+        parse(10);
         if (!isValidArgs(args)) {
             System.out.println("Please provide (only) the --posts n argument");
             return;
         }
         final int posts = parseNPosts(args[1]);
-        if (posts < 1 || posts > 100) {
-            System.out.println("Number of posts is invalid, please provide an integer between 1 and 100");
+        if (posts < 1 || posts > MAX_POSTS) {
+            System.out.println("Number of posts is invalid, please provide an integer between 1 and " + MAX_POSTS);
             return;
         }
         parse(posts);
