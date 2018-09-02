@@ -81,7 +81,14 @@ public class NewsScraper {
         final String uri = link.attr("href");
         final String author = metaRow.select("a.hnuser").text();
         final String points = metaRow.select("span.score").text().split("\\s")[0];
-        final String comments = metaRow.select("a").last().text().split("\\s")[0];
+        final String[] digitSplit = metaRow.select("a").last().text().split("\\D");
+        final String comments;
+        if (digitSplit.length < 1) {
+            // If a news item hasn't gotten any comments yet, it just has a link that says "discuss"
+            comments = "0";
+        } else {
+            comments = digitSplit[0];
+        }
         NewsItem item;
         try {
             item = new NewsItem(title, uri, author);
