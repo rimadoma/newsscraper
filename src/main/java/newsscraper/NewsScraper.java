@@ -25,20 +25,21 @@ public class NewsScraper {
 
     private static void parse(final int posts) {
         long badItems = 0;
+        final List<NewsItem> items = new ArrayList<>(posts);
         try {
             int page = 1;
             int scraped = 0;
             while (scraped < posts) {
                 final URL url = new URL("http://news.ycombinator.com/news?p=" + page);
                 final Document document = Jsoup.parse(url, 10_000);
-                final List<NewsItem> items = parsePage(document, posts - scraped);
+                final List<NewsItem> pageItems = parsePage(document, posts - scraped);
                 // TODO Exit if all items null (parsing failed for all)?
-                if (items.size() == 0) {
+                if (pageItems.size() == 0) {
                     return;
                 }
-                printJSON(items);
-                badItems += items.stream().filter(Objects::isNull).count();
-                scraped += items.size();
+                items.addAll(pageItems);
+                badItems += pageItems.stream().filter(Objects::isNull).count();
+                scraped += pageItems.size();
                 page++;
                 // TODO Should exit if page number reaches max (if there is one)
             }
@@ -46,6 +47,7 @@ public class NewsScraper {
             // TODO Log exception trace
             System.out.println("There was an error in the connection - please try again");
         }
+        printJSON(items);
         if (badItems > 0) {
             System.out.println("There were " + badItems + " news items that could not be read");
         }
@@ -67,6 +69,7 @@ public class NewsScraper {
         });
         stringer.endArray();
         final JSONArray json = new JSONArray(stringer.toString());
+        json.
         System.out.println(json.toString(4));
     }
 
