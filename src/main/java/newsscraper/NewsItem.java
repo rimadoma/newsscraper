@@ -1,5 +1,7 @@
 package newsscraper;
 
+import org.json.JSONObject;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -71,6 +73,17 @@ public class NewsItem {
 
     public void setRank(final String rank) throws IllegalArgumentException {
         this.rank = parseNonNegativeInt(rank);
+    }
+
+    public JSONObject toJSONObject() {
+        final JSONObject object = new JSONObject();
+        object.put("title", title);
+        object.put("uri", uri.toString());
+        object.put("author", author);
+        object.put("points", points);
+        object.put("comments", comments);
+        object.put("rank", rank);
+        return object;
     }
 
     private String trimLength(final String s) {

@@ -1,5 +1,6 @@
 package newsscraper;
 
+import org.json.JSONObject;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -111,5 +112,23 @@ public class NewsItemTest {
         final NewsItem item = new NewsItem(TEST_TITLE, TEST_URI, TEST_AUTHOR);
 
         item.setRank("-1");
+    }
+
+    @Test
+    public void toJSONObject() throws URISyntaxException {
+        final NewsItem item = new NewsItem(TEST_TITLE, TEST_URI, TEST_AUTHOR);
+        item.setPoints("1");
+        item.setComments("2");
+        item.setRank("3");
+
+        final JSONObject object = item.toJSONObject();
+
+        assertEquals(6, object.length());
+        assertEquals(TEST_TITLE, object.get("title"));
+        assertEquals(TEST_URI, object.get("uri"));
+        assertEquals(TEST_AUTHOR, object.get("author"));
+        assertEquals(1, object.getInt("points"));
+        assertEquals(2, object.getInt("comments"));
+        assertEquals(3, object.getInt("rank"));
     }
 }

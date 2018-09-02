@@ -1,7 +1,6 @@
 package newsscraper;
 
 import org.json.JSONArray;
-import org.json.JSONStringer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -53,24 +52,12 @@ public class NewsScraper {
         }
     }
 
-    // TODO Hacky, figure out how to write JSONObject NewsItem.toJSON without it changing the order of keys
+    // TODO Prints keys in wrong order. The JSON library from json.org doesn't have an ordered JSONObject,
+    // but then by definition "An object is an unordered set of name/value pairs."
     private static void printJSON(final List<NewsItem> items) {
-        final JSONStringer stringer = new JSONStringer();
-        stringer.array();
-        items.stream().filter(Objects::nonNull).forEach(i -> {
-            stringer.object();
-            stringer.key("title").value(i.getTitle());
-            stringer.key("uri").value(i.getUri());
-            stringer.key("author").value(i.getAuthor());
-            stringer.key("points").value(i.getPoints());
-            stringer.key("comments").value(i.getComments());
-            stringer.key("rank").value(i.getRank());
-            stringer.endObject();
-        });
-        stringer.endArray();
-        final JSONArray json = new JSONArray(stringer.toString());
-        json.
-        System.out.println(json.toString(4));
+        final JSONArray jsonArray = new JSONArray();
+        items.stream().filter(Objects::nonNull).map(NewsItem::toJSONObject).forEach(jsonArray::put);
+        System.out.println(jsonArray.toString(4));
     }
 
     static List<NewsItem> parsePage(final Document document, final int itemsNeeded) {
