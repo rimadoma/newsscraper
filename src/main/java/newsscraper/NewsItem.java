@@ -73,15 +73,6 @@ public class NewsItem {
         this.rank = parseNonNegativeInt(rank);
     }
 
-    public String toJSON() {
-        return title + "\n" +
-                uri + "\n" +
-                author + "\n" +
-                points + "\n" +
-                comments + "\n" +
-                rank + "\n";
-    }
-
     private String trimLength(final String s) {
         final int endIndex = Math.min(s.length(), MAX_STR_LENGTH);
         return s.substring(0, endIndex);

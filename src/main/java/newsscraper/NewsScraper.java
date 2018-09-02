@@ -1,5 +1,7 @@
 package newsscraper;
 
+import org.json.JSONArray;
+import org.json.JSONStringer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,7 +24,6 @@ public class NewsScraper {
     private static final int MAX_POSTS = 100;
 
     private static void parse(final int posts) {
-        final int capacity = Math.min(posts, MAX_POSTS);
         long badItems = 0;
         try {
             int page = 1;
@@ -35,7 +36,7 @@ public class NewsScraper {
                 if (items.size() == 0) {
                     return;
                 }
-                items.stream().filter(Objects::nonNull).forEach(i -> System.out.println(i.toJSON()));
+                printJSON(items);
                 badItems += items.stream().filter(Objects::isNull).count();
                 scraped += items.size();
                 page++;
@@ -50,7 +51,26 @@ public class NewsScraper {
         }
     }
 
-    public static List<NewsItem> parsePage(final Document document, final int itemsNeeded) {
+    // TODO Hacky, figure out how to write JSONObject NewsItem.toJSON without it changing the order of keys
+    private static void printJSON(final List<NewsItem> items) {
+        final JSONStringer stringer = new JSONStringer();
+        stringer.array();
+        items.stream().filter(Objects::nonNull).forEach(i -> {
+            stringer.object();
+            stringer.key("title").value(i.getTitle());
+            stringer.key("uri").value(i.getUri());
+            stringer.key("author").value(i.getAuthor());
+            stringer.key("points").value(i.getPoints());
+            stringer.key("comments").value(i.getComments());
+            stringer.key("rank").value(i.getRank());
+            stringer.endObject();
+        });
+        stringer.endArray();
+        final JSONArray json = new JSONArray(stringer.toString());
+        System.out.println(json.toString(4));
+    }
+
+    static List<NewsItem> parsePage(final Document document, final int itemsNeeded) {
         final Iterator<Element> titleRows = document.select("tr.athing").iterator();
         final Iterator<Element> metaRows = document.select("tr > td.subtext").iterator();
         final List<NewsItem> items = new ArrayList<>();
